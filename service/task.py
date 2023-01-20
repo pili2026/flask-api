@@ -1,6 +1,6 @@
 import http
-from flask_sqlalchemy.extension import sqlalchemy
-from db.task import Task, db, query, query_all
+from sqlalchemy.exc import IntegrityError
+from db.task import Task, query, query_all
 from db.task import commit, delete, flush, insert
 
 
@@ -29,7 +29,7 @@ def create_task(data: dict) -> dict:
         commit()
         ret: dict = task.to_json()
         return ret
-    except sqlalchemy.exc.IntegrityError:
+    except IntegrityError:
         return {"status": http.HTTPStatus.CONFLICT, "result": "Task already existed"}
 
 
