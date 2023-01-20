@@ -1,6 +1,6 @@
 from flask import Flask
 
-from db.model.task_model import db
+from db.task import db
 from handler.task_handler import task
 
 

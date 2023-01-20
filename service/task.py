@@ -1,9 +1,11 @@
 import http
-from db.model.task_model import Task, db
+from flask_sqlalchemy.extension import sqlalchemy
+from db.task import Task, db, query, query_all
+from db.task import commit, delete, flush, insert
 
 
 def query_task(id: str) -> dict:
-    task: Task = Task.query.get(id)
+    task: Task = query(id)
 
     if not task:
         return None
@@ -13,18 +15,22 @@ def query_task(id: str) -> dict:
 
 
 def query_tasks() -> list:
-    tasks = Task.query.all()
+    tasks = query_all()
     res: list = list(map(lambda task: task.to_json(), tasks))
     return res
 
 
 def create_task(data: dict) -> dict:
     task = Task(name=data["name"])
-    db.session.add(task)
-    db.session.flush()
-    db.session.commit()
-    ret: dict = task.to_json()
-    return ret
+
+    try:
+        insert(task)
+        flush()
+        commit()
+        ret: dict = task.to_json()
+        return ret
+    except sqlalchemy.exc.IntegrityError:
+        return {"status": http.HTTPStatus.CONFLICT, "result": "Task already existed"}
 
 
 def update_task(id, data) -> dict:
@@ -52,8 +58,8 @@ def update_task(id, data) -> dict:
             "result": f"The status: {task.status} is invalid",
         }
 
-    db.session.flush()
-    db.session.commit()
+    flush()
+    commit()
 
     return {"status": http.HTTPStatus.OK, "result": task.to_json()}
 
@@ -63,6 +69,6 @@ def remove_task(id) -> dict:
     if not task:
         return {"status": http.HTTPStatus.NOT_FOUND, "result": "Task not found"}
 
-    db.session.delete(task)
-    db.session.commit()
+    delete(task)
+    commit()
     return {"status": http.HTTPStatus.OK, "result": "Task deleted successfully"}

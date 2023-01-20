@@ -1,7 +1,7 @@
 import http
 
 from flask import Blueprint, jsonify, make_response, request
-from db.model.task_model import Task, db
+from db.task import Task, db
 from service.task import create_task, query_task, query_tasks, remove_task, update_task
 
 task = Blueprint(
