@@ -34,7 +34,7 @@ DELETE `/task/{id}`
 ### Run container
 `docker run -it -p 5000:5000 --name {container_name} {image_name}`
 
-## Test server
+## Server
 ### Curl
 #### GET
 Get all task `curl http://localhost:5000/tasks`
