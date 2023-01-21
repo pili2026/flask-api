@@ -1,6 +1,6 @@
 from flask import Flask
 
-from db.task import db
+from db.task import create_table, db
 from handler.task_handler import task
 
 
@@ -21,12 +21,14 @@ def register_blueprints(app):
     app.register_blueprint(task, url_prefix="")
 
 
+app = create_app()
+
+
 def setup_database(app):
     with app.app_context():
-        db.create_all()
+        create_table()
 
 
 if __name__ == "__main__":
-    app = create_app()
     setup_database(app)
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="192.168.56.102", port=5000)

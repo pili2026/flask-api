@@ -9,7 +9,8 @@ class Task(db.Model):
     name = db.Column(db.String(80), unique=True, nullable=False)
     status = db.Column(db.Boolean, unique=False, nullable=True)
 
-    def __init__(self, name=None, status=False):
+    def __init__(self, id=None, name=None, status=False):
+        self.id = id
         self.name = name
         self.status = status
 
@@ -20,6 +21,10 @@ class Task(db.Model):
             "name": self.name,
             "status": 0 if self.status is False else 1,
         }
+
+
+def create_table():
+    db.create_all()
 
 
 def query(id) -> Task:

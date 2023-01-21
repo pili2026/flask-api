@@ -1,7 +1,6 @@
 import http
 
 from flask import Blueprint, jsonify, make_response, request
-from db.task import Task, db
 from service.task import create_task, query_task, query_tasks, remove_task, update_task
 
 task = Blueprint(
@@ -75,7 +74,9 @@ def post_task():
                 "result": created_task,
             }
         ),
-        http.HTTPStatus.CREATED,
+        http.HTTPStatus.CREATED
+        if not created_task.get("status")
+        else created_task["status"],
     )
 
     return response
@@ -87,9 +88,11 @@ def put_task(id: str):
     data = request.get_json()
     updated_task: dict = update_task(id, data)
 
+    status = updated_task["status"]
+
     response = make_response(
         jsonify(updated_task),
-        http.HTTPStatus.OK,
+        status,
     )
     return response
 

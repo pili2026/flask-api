@@ -35,17 +35,19 @@ def create_task(data: dict) -> dict:
 
 def update_task(id, data) -> dict:
 
-    task: Task = Task.query.get(id)
+    task: Task = query(id)
+
     if not task:
         return {"status": http.HTTPStatus.NOT_FOUND, "result": "Task is not found"}
 
-    if not data.get("name"):
+    if data.get("name"):
+        task.name = data["name"]
+
+    if data.get("id"):
         return {
             "status": http.HTTPStatus.BAD_REQUEST,
-            "result": "The name field is empty or null",
+            "result": "Task id can not modify",
         }
-
-    task.name = data["name"]
 
     if data.get("status") == 1 or data.get("status") == 0:
         task.status = data["status"]
@@ -55,7 +57,7 @@ def update_task(id, data) -> dict:
     else:
         return {
             "status": http.HTTPStatus.BAD_REQUEST,
-            "result": f"The status: {task.status} is invalid",
+            "result": f"The status is invalid",
         }
 
     flush()
@@ -65,7 +67,8 @@ def update_task(id, data) -> dict:
 
 
 def remove_task(id) -> dict:
-    task = Task.query.get(id)
+    task: Task = query(id)
+
     if not task:
         return {"status": http.HTTPStatus.NOT_FOUND, "result": "Task not found"}
 
