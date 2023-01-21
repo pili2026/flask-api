@@ -5,6 +5,7 @@
 * Python 3.9
 * Flask 2.0.0
 * Docker
+* Sqlite(in memory)
 ## Test tool
 * Curl
 * Postman
